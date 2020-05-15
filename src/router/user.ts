@@ -23,6 +23,9 @@ router.get("/sign-in", (req: Request, res: Response) => {
     "call join_in('kim','1234',@join_signal)",
     (error, results: ResultType, fields) => {
       if (error) throw error;
+
+      // 1 회원가입 성공
+      // -1 회원가입 실패
       console.log(results[0][0].join_signal);
     }
   );
