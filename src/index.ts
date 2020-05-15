@@ -24,5 +24,4 @@ app.get("/hello", (req: Request, res: Response) => {
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
-  // console.log(`Check out ec2-3-16-143-85.us-east-2.compute.amazonaws.com:${PORT}`);
 });
