@@ -1,8 +1,6 @@
 import { Router, Request, Response } from "express";
 import { connection } from "../dbms";
 
-type ResultType = [[{ join_sig: number }]];
-
 const router = Router();
 
 router.post("/login", (req: Request, res: Response) => {
@@ -27,7 +25,7 @@ router.post("/sign-in", (req: Request, res: Response) => {
   const { id, password } = req.body;
   connection.query(
     `call join_in('${id}','${password}', @join_sig)`,
-    (error, results: ResultType, fields) => {
+    (error, results, fields) => {
       if (error) throw error;
 
       // 1 회원가입 성공
@@ -38,7 +36,7 @@ router.post("/sign-in", (req: Request, res: Response) => {
   );
 });
 
-router.post("/personal", (req, res) => {
+router.post("/personal/save", (req, res) => {
   const { id, name, sex, intro, birthday } = req.body;
   console.log(id, name, sex, intro, birthday);
   connection.query(
@@ -68,12 +66,25 @@ router.post("/follow", (req, res) => {
 router.post("/unfollow", (req, res) => {
   const { id, friendId } = req.body;
   connection.query(
-    `call Friend_Follow('${id}', '${friendId}', @follow_sig)`,
+    `call Friend_Unfollow('${id}', '${friendId}', @unfollow_sig)`,
     (error, results, fields) => {
       if (error) throw error;
 
       console.log(results[0][0]);
-      res.send(results[0][0].follow_sig);
+      res.send(results[0][0].unfollow_sig);
+    }
+  );
+});
+
+router.post("/personal/modify", (req, res) => {
+  const { id, intro } = req.body;
+  connection.query(
+    `call Update_User_Info('${id}', '${intro}', @update_info_sig)`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0][0]);
+      res.send(results[0][0].update_info_sig);
     }
   );
 });
