@@ -4,9 +4,9 @@ import { connection } from "../dbms";
 const router = Router();
 
 router.post("/create", (req, res) => {
-  const { id, commentNumber, comment } = req.body;
+  const { id, postNumber, comment } = req.body;
   connection.query(
-    `call Create_Comment('${id}', ${commentNumber}, '${comment}', @create_comment_sig)`,
+    `call Create_Comment('${id}', ${postNumber}, '${comment}', @create_comment_sig)`,
     (error, results, fields) => {
       if (error) throw error;
 
@@ -18,6 +18,7 @@ router.post("/create", (req, res) => {
 
 router.post("/update", (req, res) => {
   const { id, commentNumber, comment } = req.body;
+  // console.log(id, commentNumber, comment);
   connection.query(
     `call Update_Comment('${id}', ${commentNumber}, '${comment}', @update_comment_sig)`,
     (error, results, fields) => {

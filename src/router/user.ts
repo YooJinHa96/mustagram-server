@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { connection } from "../dbms";
+// import moment from "moment";
 
 const router = Router();
 
@@ -97,8 +98,12 @@ router.post("/friends", (req, res) => {
     (error, results, fields) => {
       if (error) throw error;
 
-      console.log(results[0]);
-      // res.send(results[0][0].update_info_sig);
+      let list: Array<number> = [];
+
+      results[0].forEach(({ Friend_num }: { Friend_num: number | null }) => {
+        if (Friend_num != null) list.push(Friend_num);
+      });
+      res.send(list);
     }
   );
 });
@@ -110,8 +115,10 @@ router.post("/personal/get", (req, res) => {
     (error, results, fields) => {
       if (error) throw error;
 
-      console.log(results[0][0]);
-      // res.send(results[0][0].update_info_sig);
+      // const {User_Num, Name, Sex, Intro, Birth} = results[0][0];
+      // console.log(User_Num, Name, Sex, Intro, moment(Birth).format("YYMMDD"));
+      const { Intro } = results[0][0];
+      res.send(Intro);
     }
   );
 });
@@ -121,8 +128,8 @@ router.post("/count-posts", (req, res) => {
   connection.query(`call Count_My_Posts('${id}')`, (error, results, fields) => {
     if (error) throw error;
 
-    console.log(results[0][0]);
-    res.send(results[0][0].post_count);
+    const result = results[0][0].post_count;
+    res.send({ post: result });
   });
 });
 
@@ -158,7 +165,7 @@ router.post("/id", (req, res) => {
       if (error) throw error;
 
       console.log(results[0][0]);
-      // res.send(results[0][0].following_count);
+      res.send(results[0][0].ID);
     }
   );
 });
