@@ -55,8 +55,21 @@ router.post("/like", (req, res) => {
   );
 });
 
+router.post("/count-like", (req, res) => {
+  const { postNumber } = req.body;
+  connection.query(
+    `call Count_Post_Like(${postNumber})`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0]);
+      res.send(results[0][0].p_like_count);
+    }
+  );
+});
+
 // 게시물 부분 수정해야합니다.
-router.post("/get", (req, res) => {
+router.post("/friends", (req, res) => {
   const { id } = req.body;
   connection.query(
     `call Check_Friend_Posts('${id}')`,
@@ -65,6 +78,18 @@ router.post("/get", (req, res) => {
 
       console.log(results[0]);
       console.log(results[0][0]);
+    }
+  );
+});
+
+router.post("/comments", (req, res) => {
+  const { postNumber } = req.body;
+  connection.query(
+    `call Check_Posts_Comments(${postNumber})`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0]);
     }
   );
 });

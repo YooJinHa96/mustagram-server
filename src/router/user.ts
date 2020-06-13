@@ -89,4 +89,78 @@ router.post("/personal/modify", (req, res) => {
   );
 });
 
+// 수정해야합니다.
+router.post("/friends", (req, res) => {
+  const { id } = req.body;
+  connection.query(
+    `call Check_My_Friends('${id}')`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0]);
+      // res.send(results[0][0].update_info_sig);
+    }
+  );
+});
+
+router.post("/personal/get", (req, res) => {
+  const { id } = req.body;
+  connection.query(
+    `call Print_User_Info('${id}')`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0][0]);
+      // res.send(results[0][0].update_info_sig);
+    }
+  );
+});
+
+router.post("/count-posts", (req, res) => {
+  const { id } = req.body;
+  connection.query(`call Count_My_Posts('${id}')`, (error, results, fields) => {
+    if (error) throw error;
+
+    console.log(results[0][0]);
+    res.send(results[0][0].post_count);
+  });
+});
+
+router.post("/count-followers", (req, res) => {
+  const { id } = req.body;
+  connection.query(`call Count_Follower('${id}')`, (error, results, fields) => {
+    if (error) throw error;
+
+    const result = results[0][0].follower_count;
+    res.send({ follower: result });
+  });
+});
+
+router.post("/count-followings", (req, res) => {
+  const { id } = req.body;
+  connection.query(
+    `call Count_Following('${id}')`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      const result = results[0][0].following_count;
+      // console.log(results[0][0].following_count);
+      res.send({ following: result });
+    }
+  );
+});
+
+router.post("/id", (req, res) => {
+  const { userNumber } = req.body;
+  connection.query(
+    `call Get_User_ID(${userNumber})`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      console.log(results[0][0]);
+      // res.send(results[0][0].following_count);
+    }
+  );
+});
+
 export const userRouter = router;
