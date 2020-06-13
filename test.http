@@ -1,6 +1,0 @@
-POST https://localhost:3000/post/get HTTP/1.1
-Content-Type: application/json
-
-{
-  "id": "유진하"
-}
