@@ -22,10 +22,6 @@ connection.connect((err: mysql.MysqlError) => {
   console.log("Success connecting at mustagram");
 });
 
-app.get("/hello", (req: Request, res: Response) => {
-  res.send({ data: "Hello World!" });
-});
-
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
