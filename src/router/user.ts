@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { connection } from "../dbms";
-// import moment from "moment";
+import moment from "moment";
+import { PostFormat } from "./post";
 
 const router = Router();
 
@@ -11,9 +12,6 @@ router.post("/login", (req: Request, res: Response) => {
     `call log_in('${id}','${password}', @login_sig)`,
     (error, results, fields) => {
       if (error) throw error;
-      // 1 이상의 값은 유저번호
-      // -1 비밀번호 오류
-      // -2 아이디 오류
       const result = results[0][0].login_sig;
       console.log(result);
 
@@ -29,8 +27,6 @@ router.post("/sign-in", (req: Request, res: Response) => {
     (error, results, fields) => {
       if (error) throw error;
 
-      // 1 회원가입 성공
-      // -1 회원가입 실패
       console.log(results[0][0]);
       res.send(results[0][0].join_sig);
     }
@@ -100,9 +96,10 @@ router.post("/friends", (req, res) => {
 
       let list: Array<number> = [];
 
-      results[0].forEach(({ Friend_num }: { Friend_num: number | null }) => {
-        if (Friend_num != null) list.push(Friend_num);
+      results[0].forEach(({ Friend_Num }: { Friend_Num: number | null }) => {
+        if (Friend_Num != null) list.push(Friend_Num);
       });
+      console.log(list);
       res.send(list);
     }
   );
@@ -117,8 +114,8 @@ router.post("/personal/get", (req, res) => {
 
       // const {User_Num, Name, Sex, Intro, Birth} = results[0][0];
       // console.log(User_Num, Name, Sex, Intro, moment(Birth).format("YYMMDD"));
-      const { Intro } = results[0][0];
-      res.send(Intro);
+      const intro = results[0][0]?.Intro;
+      res.send(intro);
     }
   );
 });
@@ -164,8 +161,57 @@ router.post("/id", (req, res) => {
     (error, results, fields) => {
       if (error) throw error;
 
-      console.log(results[0][0]);
+      console.log(results[0][0].ID);
       res.send(results[0][0].ID);
+    }
+  );
+});
+
+router.post("/posts", (req, res) => {
+  const { id } = req.body;
+  console.log(id);
+  connection.query(`call Check_My_Posts('${id}')`, (error, results, fields) => {
+    if (error) throw error;
+
+    const result: PostFormat[] = results[0];
+
+    result.length !== 0
+      ? res.send(
+          result.map(
+            ({ Post_Num, User_Num, Wr_Time, Post_Content }: PostFormat) => ({
+              postNumber: Post_Num,
+              userNumber: User_Num,
+              time: moment(Wr_Time).format("YYMMDD-hhmmss"),
+              content: Post_Content,
+            })
+          )
+        )
+      : res.send(result);
+    // res.send(results[0][0].ID);
+  });
+});
+
+type FriendRecommendation = {
+  User_Num: number;
+  ID: string;
+};
+
+router.post("/friend/recommendation", (req, res) => {
+  const { id } = req.body;
+  connection.query(
+    `call Friend_Recommended('${id}')`,
+    (error, results, fields) => {
+      if (error) throw error;
+
+      const result: FriendRecommendation[] = results[0];
+      result.length !== 0
+        ? res.send(
+            result.map(({ User_Num, ID }: FriendRecommendation) => ({
+              userNumber: User_Num,
+              id: ID,
+            }))
+          )
+        : res.send(result);
     }
   );
 });
