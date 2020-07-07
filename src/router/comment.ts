@@ -67,6 +67,6 @@ router.post("/count-like", (req, res) => {
       res.send(results[0][0].c_like_count);
     }
   );
-}); 
+});
 
 export const commentRouter = router;

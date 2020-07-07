@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { connection } from "../dbms";
 import moment from "moment";
 
 const router = Router();
 
-export type PostFormat = {
+type PostFormat = {
   Post_Num: number;
   User_Num: number;
   Wr_Time: Date;
@@ -64,7 +64,7 @@ router.post("/like", (req, res) => {
     (error, results, fields) => {
       if (error) throw error;
 
-      console.log(results[0][0].post_like_sig);
+      console.log(results[0][0]);
       res.send(results[0][0].post_like_sig);
     }
   );
